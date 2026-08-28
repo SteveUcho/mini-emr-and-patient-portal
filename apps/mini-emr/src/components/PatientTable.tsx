@@ -4,113 +4,8 @@ import { Button, Separator, Surface, cn } from "@heroui/react";
 import { ColumnDef, createSortedRowModel, rowSortingFeature, sortFns, tableFeatures, useTable } from "@tanstack/react-table";
 import { motion } from "motion/react";
 import React, { useState } from "react";
-
-interface Appointment {
-  id: number;
-  provider: string;
-  datetime: string;
-  repeat: string;
-}
-
-interface Prescription {
-  id: number;
-  medication: string;
-  dosage: string;
-  quantity: number;
-  refill_on: string;
-  refill_schedule: string;
-}
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  appointments: Appointment[];
-  prescriptions: Prescription[];
-};
-
-const users: User[] = [
-  {
-    "id": 1,
-    "name": "Mark Johnson",
-    "email": "mark@some-email-provider.net",
-    "password": "Password123!",
-    "appointments": [
-      {
-        "id": 1,
-        "provider": "Dr Kim West",
-        "datetime": "2026-04-16T16:30:00.000-07:00",
-        "repeat": "weekly"
-      },
-      {
-        "id": 2,
-        "provider": "Dr Lin James",
-        "datetime": "2026-04-19T18:30:00.000-07:00",
-        "repeat": "monthly"
-      }
-    ],
-    "prescriptions": [
-      {
-        "id": 1,
-        "medication": "Lexapro",
-        "dosage": "5mg",
-        "quantity": 2,
-        "refill_on": "2026-04-05",
-        "refill_schedule": "monthly"
-      },
-      {
-        "id": 2,
-        "medication": "Ozempic",
-        "dosage": "1mg",
-        "quantity": 1,
-        "refill_on": "2026-04-10",
-        "refill_schedule": "monthly"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "name": "Lisa Smith",
-    "email": "lisa@some-email-provider.net",
-    "password": "Password123!",
-    "appointments": [
-      {
-        "id": 3,
-        "provider": "Dr Sally Field",
-        "datetime": "2026-04-22T18:15:00.000-07:00",
-        "repeat": "monthly"
-      },
-      {
-        "id": 4,
-        "provider": "Dr Lin James",
-        "datetime": "2026-04-25T20:00:00.000-07:00",
-        "repeat": "weekly"
-      }
-    ],
-    "prescriptions": [
-      {
-        "id": 3,
-        "medication": "Metformin",
-        "dosage": "500mg",
-        "quantity": 2,
-        "refill_on": "2026-04-15",
-        "refill_schedule": "monthly"
-      },
-      {
-        "id": 4,
-        "medication": "Diovan",
-        "dosage": "100mg",
-        "quantity": 1,
-        "refill_on": "2026-04-25",
-        "refill_schedule": "monthly"
-      }
-    ]
-  }
-]
-
-const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
-const dosages = ["1mg", "2mg", "3mg", "5mg", "10mg", "25mg", "50mg", "100mg", "250mg", "500mg", "1000mg"];
+import { formatDateString } from "@/utils/stringManipulation";
+import { User } from "@/types/tableTypes";
 
 const features = tableFeatures({
   rowSortingFeature, // enables sorting APIs and state
@@ -136,34 +31,19 @@ const columns: Array<ColumnDef<typeof features, User>> = [
   },
 ]
 
-const showAppointmentKeys = ["datetime", "repeat"]
-const showPrescriptionKeys = ["quantity", "dosage", "refill_on", "refill_schedule"]
-
-const formatDateString = (someString: string) => {
-  try {
-    let date: Date;
-    if (someString.includes('T')) {
-      date = new Date(someString);
-    } else {
-      date = new Date(`${someString}T00:00:00`);
-    }
-
-    const formatted = new Intl.DateTimeFormat('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
-    }).format(date);
-
-    return formatted;
-  } catch {
-    return someString;
-  }
+interface PatientTableProps {
+  data: User[]
+  appointmentKeys: string[]
+  prescriptionKeys: string[]
 }
 
-export function PatientTable() {
+export function PatientTable(props: Readonly<PatientTableProps>) {
+  const { data, appointmentKeys, prescriptionKeys } = props
   const table = useTable({
     key: 'users-table',
     features,
     columns,
-    data: users,
+    data,
   })
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set())
 
@@ -284,7 +164,7 @@ export function PatientTable() {
                               </div>
                               <Separator className="my-2" variant="secondary" />
                               {
-                                showAppointmentKeys.map((key) => (
+                                appointmentKeys.map((key) => (
                                   <div key={key} className="capitalize">
                                     <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof appointment[key as keyof typeof appointment] === 'string' ? formatDateString(appointment[key as keyof typeof appointment] as string) : appointment[key as keyof typeof appointment]}
                                   </div>
@@ -318,11 +198,13 @@ export function PatientTable() {
                                   </div>
                                 </div>
                                 <Separator className="my-2" variant="secondary" />
-                                {showPrescriptionKeys.map((key) => (
-                                  <div key={key} className="capitalize">
-                                    <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof prescription[key as keyof typeof prescription] === 'string' ? formatDateString(prescription[key as keyof typeof prescription] as string) : prescription[key as keyof typeof prescription]}
-                                  </div>
-                                ))}
+                                {
+                                  prescriptionKeys.map((key) => (
+                                    <div key={key} className="capitalize">
+                                      <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof prescription[key as keyof typeof prescription] === 'string' ? formatDateString(prescription[key as keyof typeof prescription] as string) : prescription[key as keyof typeof prescription]}
+                                    </div>
+                                  ))
+                                }
                               </div>
                             )
                           })}
