@@ -1,7 +1,7 @@
 "use client";
 import { ChevronDown, ChevronRight, Pencil, Plus, TrashBin } from "@gravity-ui/icons";
 import { Button, Separator, Surface, cn } from "@heroui/react";
-import { ColumnDef, createSortedRowModel, rowSortingFeature, sortFns, tableFeatures, useTable } from "@tanstack/react-table";
+import { createColumnHelper, createSortedRowModel, rowSortingFeature, sortFns, tableFeatures, useTable } from "@tanstack/react-table";
 import { motion } from "motion/react";
 import React, { useState } from "react";
 import { formatDateString } from "@/utils/stringManipulation";
@@ -13,24 +13,40 @@ const features = tableFeatures({
   sortFns,
 })
 
-const columns: Array<ColumnDef<typeof features, User>> = [
-  {
-    accessorKey: 'name', // accessorKey shorthand
+const columnHelper = createColumnHelper<typeof features, User>()
+
+const columns = columnHelper.columns([
+  columnHelper.accessor('name', {
     header: 'Name',
-    cell: (info) => <span className="block text-nowrap overflow-hidden text-ellipsis min-w-0">{info.getValue<string>()}</span>,
-  },
-  {
-    accessorFn: (row) => row.email, // accessorFn alternative with a custom id
-    id: 'email',
-    header: "Email",
-    cell: (info) => <span className="block text-nowrap overflow-hidden text-ellipsis min-w-0">{info.getValue<string>()}</span>,
-  },
-  {
-    accessorKey: 'password',
-    header: "Password",
-    cell: (info) => <span className="block text-nowrap overflow-hidden text-ellipsis min-w-0">{info.getValue<string>()}</span>,
-  },
-]
+    cell: (info) => <span className="text-nowrap overflow-hidden text-ellipsis">{info.getValue<string>()}</span>,
+  }),
+  columnHelper.accessor('email', {
+    header: 'Email',
+    cell: (info) => <span className="text-nowrap overflow-hidden text-ellipsis">{info.getValue<string>()}</span>,
+  }),
+  columnHelper.display({
+    id: 'info',
+    header: 'Info',
+    cell: ({ row }) => {
+      const user = row.original
+      const apptCount = user.appointments.length
+      const prescCount = user.prescriptions.length
+      return (
+        <div className="flex gap-2 w-full text-center items-center text-accent">
+          <div className="border-accent border rounded-lg flex-1">
+            <span className="font-bold">Appt:</span> {apptCount}
+          </div>
+          <div className="border-accent border rounded-lg flex-1">
+            <span className="font-bold">Presc:</span> {prescCount}
+          </div>
+          <Button isIconOnly aria-label="Edit user" variant="secondary" className="ml-auto">
+            <Pencil />
+          </Button>
+        </div>
+      )
+    },
+  }),
+])
 
 interface PatientTableProps {
   data: User[]
@@ -66,7 +82,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
         <thead>
           {
             table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="flex py-2 px-4">
+              <tr key={headerGroup.id} className="flex py-2 px-4 gap-4">
                 {headerGroup.headers.map((header) => (
                   <th key={header.id} className="flex-1 text-left">
                     {header.isPlaceholder ? null : (
@@ -99,7 +115,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                 <tr
                   className={
                     cn(
-                      "flex py-2 px-4",
+                      "flex py-2 px-4 gap-4",
                       "bg-background/50",
                       index === 0 ? "rounded-t-2xl" : "",
                       index === table.getRowModel().rows.length - 1 && !openKeys.has(row.id) ? "rounded-b-2xl" : "",
@@ -124,13 +140,6 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                         )
                       }
                       <table.FlexRender cell={cell} />
-                      {
-                        cell.column.id === "password" && (
-                          <Button isIconOnly aria-label="Copy password" variant="secondary" className="ml-auto">
-                            <Pencil />
-                          </Button>
-                        )
-                      }
                     </td>
                   ))}
                 </tr>

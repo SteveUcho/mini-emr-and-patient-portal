@@ -88,7 +88,7 @@ const showPrescriptionKeys = ["quantity", "dosage", "refill_on", "refill_schedul
 
 export default function Home() {
   return (
-    <div className="md:w-3xl mx-auto p-2 max-w-full">
+    <div className="md:w-8/10 mx-auto p-2 max-w-4xl">
       <h1 className="text-4xl font-bold my-8">Mini-EMR</h1>
       <PatientTable data={users} appointmentKeys={showAppointmentKeys} prescriptionKeys={showPrescriptionKeys} />
     </div>
