@@ -1,5 +1,5 @@
 {
-  "name": "mini-emr",
+  "name": "patient-portal",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -19,7 +19,7 @@
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "packageManager": "bun@1.4.0",
   "ignoreScripts": [
