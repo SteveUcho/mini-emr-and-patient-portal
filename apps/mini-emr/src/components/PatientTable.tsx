@@ -139,6 +139,25 @@ const columns: Array<ColumnDef<typeof features, User>> = [
 const showAppointmentKeys = ["datetime", "repeat"]
 const showPrescriptionKeys = ["quantity", "dosage", "refill_on", "refill_schedule"]
 
+const formatDateString = (someString: string) => {
+  try {
+    let date: Date;
+    if (someString.includes('T')) {
+      date = new Date(someString);
+    } else {
+      date = new Date(`${someString}T00:00:00`);
+    }
+
+    const formatted = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    }).format(date);
+
+    return formatted;
+  } catch {
+    return someString;
+  }
+}
+
 export function PatientTable() {
   const table = useTable({
     key: 'users-table',
@@ -266,8 +285,8 @@ export function PatientTable() {
                               <Separator className="my-2" variant="secondary" />
                               {
                                 showAppointmentKeys.map((key) => (
-                                  <div key={key}>
-                                    <span className="font-semibold capitalize">{key.replaceAll('_', ' ')}:</span> {appointment[key as keyof typeof appointment]}
+                                  <div key={key} className="capitalize">
+                                    <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof appointment[key as keyof typeof appointment] === 'string' ? formatDateString(appointment[key as keyof typeof appointment] as string) : appointment[key as keyof typeof appointment]}
                                   </div>
                                 ))
                               }
@@ -301,7 +320,7 @@ export function PatientTable() {
                                 <Separator className="my-2" variant="secondary" />
                                 {showPrescriptionKeys.map((key) => (
                                   <div key={key} className="capitalize">
-                                    <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {prescription[key as keyof typeof prescription]}
+                                    <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof prescription[key as keyof typeof prescription] === 'string' ? formatDateString(prescription[key as keyof typeof prescription] as string) : prescription[key as keyof typeof prescription]}
                                   </div>
                                 ))}
                               </div>
