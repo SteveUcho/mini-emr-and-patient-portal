@@ -1,0 +1,8 @@
+{
+  "name": "mini-emr-and-patient-portal",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
