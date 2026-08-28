@@ -17,17 +17,18 @@ const columns: Array<ColumnDef<typeof features, User>> = [
   {
     accessorKey: 'name', // accessorKey shorthand
     header: 'Name',
-    cell: (info) => info.getValue(),
+    cell: (info) => <span className="block text-nowrap overflow-hidden text-ellipsis min-w-0">{info.getValue<string>()}</span>,
   },
   {
     accessorFn: (row) => row.email, // accessorFn alternative with a custom id
     id: 'email',
-    header: () => <span>Email</span>,
-    cell: (info) => <i>{info.getValue<string>()}</i>,
+    header: "Email",
+    cell: (info) => <span className="block text-nowrap overflow-hidden text-ellipsis min-w-0">{info.getValue<string>()}</span>,
   },
   {
     accessorKey: 'password',
-    header: () => 'Password',
+    header: "Password",
+    cell: (info) => <span className="block text-nowrap overflow-hidden text-ellipsis min-w-0">{info.getValue<string>()}</span>,
   },
 ]
 
@@ -60,7 +61,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
   }
 
   return (
-    <Surface variant="secondary" className="rounded-2xl p-1 w-full">
+    <Surface variant="secondary" className="rounded-2xl p-1">
       <table className="w-full">
         <thead>
           {
@@ -107,7 +108,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                   onClick={handleRowClick(row.id)}
                 >
                   {row.getAllCells().map((cell) => (
-                    <td key={cell.id} className="flex flex-1 items-center">
+                    <td key={cell.id} className="flex flex-1 items-center text-nowrap overflow-hidden text-ellipsis min-w-0 max-w-full">
                       {
                         cell.column.id === "name" && (
                           <Button
@@ -139,7 +140,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                       initial={{ height: 0 }}
                       animate={openKeys.has(row.id) ? { height: "auto" } : { height: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex overflow-hidden"
+                      className="sm:flex overflow-hidden"
                     >
                       <div className="flex-1 p-4">
                         <div className="flex items-center justify-between mb-2">
