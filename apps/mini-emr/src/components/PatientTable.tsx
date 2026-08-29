@@ -171,9 +171,11 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                               <div className="flex items-center justify-between">
                                 <h4>{appointment.provider}</h4>
                                 <div>
-                                  <Button isIconOnly aria-label="Edit appointment" variant="secondary" className="mr-1">
-                                    <Pencil />
-                                  </Button>
+                                  <ToggleModal data={appointment} config={modals.EditAppointmentModal}>
+                                    <Button isIconOnly aria-label="Edit appointment" variant="secondary" className="mr-1">
+                                      <Pencil />
+                                    </Button>
+                                  </ToggleModal>
                                   <Button isIconOnly aria-label="Delete appointment" variant="danger-soft">
                                     <TrashBin />
                                   </Button>

@@ -45,7 +45,38 @@ export const modals: Record<string, ModalConfig> = {
         name: "repeat",
         fieldType: "select",
         label: "Repeat",
-        options: ["Daily", "Weekly", "Monthly", "Yearly"]
+        options: ["daaily", "weekly", "monthly", "yearly"]
+      }
+    ]
+  },
+  EditAppointmentModal: {
+    title: "Edit Appointment",
+    description: "Edit an existing appointment",
+    form: [
+      {
+        name: "id",
+        hidden: true,
+        fieldType: "textfield",
+        textType: "text",
+        label: "ID",
+      },
+      {
+        name: "provider",
+        fieldType: "textfield",
+        textType: "text",
+        label: "Provider",
+      },
+      {
+        name: "datetime",
+        fieldType: "textfield",
+        textType: "text",
+        label: "Date and Time",
+      },
+      {
+        name: "repeat",
+        fieldType: "select",
+        label: "Repeat",
+        options: ["daily", "weekly", "monthly", "yearly"]
       }
     ]
   }

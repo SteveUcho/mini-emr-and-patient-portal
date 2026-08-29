@@ -11,6 +11,7 @@ export interface ModalConfig {
   description: string;
   form: {
     name: string;
+    hidden?: boolean;
     fieldType: "textfield" | "select";
     textType?: "text" | "email" | "password";
     label: string;
@@ -33,6 +34,7 @@ export function ModalBuilder() {
       return;
     }
     setFormState({ ...formState, [field]: value });
+    console.log(formState, formData);
   };
 
   const handleToggleModal = () => {
@@ -72,14 +74,14 @@ export function ModalBuilder() {
                           onChange={handleFieldChange(field.name)}
                         >
                           <Label>{field.label}</Label>
-                          <Select.Trigger>
+                          <Select.Trigger className="capitalize">
                             <Select.Value />
                             <Select.Indicator />
                           </Select.Trigger>
                           <Select.Popover>
                             <ListBox>
                               {field.options?.map((option) => (
-                                <ListBox.Item key={option} id={option} textValue={option}>
+                                <ListBox.Item key={option} id={option} textValue={option} className="capitalize">
                                   {option}
                                   <ListBox.ItemIndicator />
                                 </ListBox.Item>
@@ -90,7 +92,7 @@ export function ModalBuilder() {
                       )
                     } else if (field.fieldType === "textfield") {
                       return (
-                        <TextField key={field.name} name={field.name} type={field.textType} variant="secondary">
+                        <TextField key={field.name} hidden={field.hidden} name={field.name} type={field.textType} variant="secondary">
                           <Label>{field.label}</Label>
                           <Input placeholder={`Enter your ${field.label.toLowerCase()}`} value={formData[field.name]} onChange={handleFieldChange(field.name)} />
                         </TextField>
