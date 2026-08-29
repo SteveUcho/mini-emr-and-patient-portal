@@ -159,7 +159,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                       <div className="flex-1 p-4">
                         <div className="flex items-center justify-between mb-2">
                           <h3>Appointments</h3>
-                          <ToggleModal data={{}} config={modals.AddAppointmentModal}>
+                          <ToggleModal config={modals.AddAppointmentModal}>
                             <Button isIconOnly size="sm" aria-label="Add appointment">
                               <Plus />
                             </Button>
@@ -199,9 +199,11 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                       <div className="flex-1 p-4">
                         <div className="flex items-center justify-between mb-2">
                           <h3>Prescriptions</h3>
-                          <Button isIconOnly size="sm" aria-label="Add prescription">
-                            <Plus />
-                          </Button>
+                          <ToggleModal config={modals.AddPrescriptionModal}>
+                            <Button isIconOnly size="sm" aria-label="Add prescription">
+                              <Plus />
+                            </Button>
+                          </ToggleModal>
                         </div>
                         <div className="flex flex-col gap-2">
                           {row.original.prescriptions.map((prescription) => {
@@ -210,12 +212,16 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                                 <div className="flex items-center justify-between">
                                   <h4>{prescription.medication}</h4>
                                   <div>
-                                    <Button isIconOnly aria-label="Edit prescription" variant="secondary" className="mr-1">
-                                      <Pencil />
-                                    </Button>
-                                    <Button isIconOnly aria-label="Delete prescription" variant="danger-soft">
-                                      <TrashBin />
-                                    </Button>
+                                    <ToggleModal data={prescription} config={modals.EditPrescriptionModal}>
+                                      <Button isIconOnly aria-label="Edit prescription" variant="secondary" className="mr-1">
+                                        <Pencil />
+                                      </Button>
+                                    </ToggleModal>
+                                    <ToggleModal config={modals.DeletePrescriptionModal}>
+                                      <Button isIconOnly aria-label="Delete prescription" variant="danger-soft">
+                                        <TrashBin />
+                                      </Button>
+                                    </ToggleModal>
                                   </div>
                                 </div>
                                 <Separator className="my-2" variant="secondary" />

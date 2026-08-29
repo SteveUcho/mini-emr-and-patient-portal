@@ -38,7 +38,7 @@ export function ModalBuilder() {
 
   const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement> | Key | null) => {
     const value = typeof e === 'string' || typeof e === 'number' || e === null ? e : e.target.value;
-    if (value === modalState.data[field]) {
+    if (value === modalState.data?.[field]) {
       const tempState = { ...formState };
       delete tempState[field];
       setFormState(tempState);
@@ -72,7 +72,7 @@ export function ModalBuilder() {
               </p>
             </Modal.Header>
             {
-              modalState.config?.form?.length && modalState.config.form.every((field) => field.hidden !== true) && (
+              modalState.config?.form?.length && modalState.config.form.some((field) => field.hidden !== true) && (
                 <Modal.Body className="p-6">
                   <Surface variant="default">
                     <form className="flex flex-col gap-4">

@@ -3,8 +3,8 @@ import { ModalConfig } from "@/components/ModalBuilder";
 
 interface ModalBuilderState {
   isOpen: boolean;
-  data: Record<string, any>;
+  data?: Record<string, any>;
   config: ModalConfig | null;
 }
 
-export const modalBuilderAtom = atom<ModalBuilderState>({ isOpen: false, data: {}, config: null });
+export const modalBuilderAtom = atom<ModalBuilderState>({ isOpen: false, config: null });

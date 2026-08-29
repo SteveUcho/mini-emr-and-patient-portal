@@ -5,7 +5,7 @@ import {  useSetAtom } from "jotai";
 import { Children, cloneElement, ReactElement } from "react";
 
 interface ToggleModalProps {
-  data: any;
+  data?: any;
   config: any;
   children: ReactElement;
 }

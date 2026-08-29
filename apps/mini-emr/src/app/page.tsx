@@ -81,8 +81,8 @@ const users: User[] = [
   }
 ]
 
-const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
-const dosages = ["1mg", "2mg", "3mg", "5mg", "10mg", "25mg", "50mg", "100mg", "250mg", "500mg", "1000mg"];
+export const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
+export const dosages = ["1mg", "2mg", "3mg", "5mg", "10mg", "25mg", "50mg", "100mg", "250mg", "500mg", "1000mg"];
 
 const showAppointmentKeys = ["datetime", "repeat"]
 const showPrescriptionKeys = ["quantity", "dosage", "refill_on", "refill_schedule"]
