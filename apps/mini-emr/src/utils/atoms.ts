@@ -1,11 +1,10 @@
 import { atom } from "jotai";
-import { ModalUser } from "../components/EditUserModal";
+import { ModalConfig } from "@/components/ModalBuilder";
 
-interface EditUserModalState {
+interface ModalBuilderState {
   isOpen: boolean;
-  data: {
-    user?: ModalUser | null;
-  };
+  data: Record<string, any>;
+  config: ModalConfig | null;
 }
 
-export const editUserModalAtom = atom<EditUserModalState>({ isOpen: false, data: {} });
+export const modalBuilderAtom = atom<ModalBuilderState>({ isOpen: false, data: {}, config: null });

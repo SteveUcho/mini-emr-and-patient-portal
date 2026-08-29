@@ -1,4 +1,4 @@
-import { EditUserModal } from "@/components/EditUserModal";
+import { ModalBuilder } from "@/components/ModalBuilder";
 import { PatientTable } from "@/components/PatientTable";
 import { User } from "@/types/tableTypes";
 
@@ -92,7 +92,7 @@ export default function Home() {
     <div className="md:w-8/10 mx-auto p-2 max-w-4xl">
       <h1 className="text-4xl font-bold my-8">Mini-EMR</h1>
       <PatientTable data={users} appointmentKeys={showAppointmentKeys} prescriptionKeys={showPrescriptionKeys} />
-      <EditUserModal />
+      <ModalBuilder />
     </div>
   );
 }

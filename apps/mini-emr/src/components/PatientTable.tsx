@@ -1,4 +1,5 @@
 "use client";
+
 import { ChevronDown, ChevronRight, Pencil, Plus, TrashBin } from "@gravity-ui/icons";
 import { Button, Separator, Surface, cn } from "@heroui/react";
 import { createColumnHelper, createSortedRowModel, rowSortingFeature, sortFns, tableFeatures, useTable } from "@tanstack/react-table";
@@ -6,8 +7,8 @@ import { motion } from "motion/react";
 import React, { useState } from "react";
 import { formatDateString } from "@/utils/stringManipulation";
 import { User } from "@/types/tableTypes";
-import { ToggleAtom } from "./ToggleAtom";
-import { editUserModalAtom } from "@/utils/atoms";
+import { ToggleModal } from "./ToggleAtom";
+import { modals } from "@/utils/modalConfigs";
 
 const features = tableFeatures({
   rowSortingFeature, // enables sorting APIs and state
@@ -41,11 +42,11 @@ const columns = columnHelper.columns([
           <div className="border-accent border rounded-lg flex-1 px-2">
             <span className="font-bold">Presc:</span> {prescCount}
           </div>
-          <ToggleAtom atomToggle={editUserModalAtom} data={{ user }}>
+          <ToggleModal data={{ user }} config={modals.EditUserModal}>
             <Button isIconOnly aria-label="Edit user" variant="secondary" className="ml-auto">
               <Pencil />
             </Button>
-          </ToggleAtom>
+          </ToggleModal>
         </div>
       )
     },

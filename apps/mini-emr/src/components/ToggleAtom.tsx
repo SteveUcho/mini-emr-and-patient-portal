@@ -1,22 +1,23 @@
 "use client";
 
-import { PrimitiveAtom, useSetAtom } from "jotai";
+import { modalBuilderAtom } from "@/utils/atoms";
+import {  useSetAtom } from "jotai";
 import { Children, cloneElement, ReactElement } from "react";
 
-interface ToggleAtomProps {
-  atomToggle: PrimitiveAtom<{ isOpen: boolean; data: any }>;
+interface ToggleModalProps {
   data: any;
+  config: any;
   children: ReactElement;
 }
 
-export function ToggleAtom({ atomToggle, data, children }: Readonly<ToggleAtomProps>) {
-  const toggleAtom = useSetAtom(atomToggle);
+export function ToggleModal({ data, config, children }: Readonly<ToggleModalProps>) {
+  const toggleAtom = useSetAtom(modalBuilderAtom);
 
   const child = Children.only(children);
 
   return cloneElement(child, {
     onClick: () => {
-      toggleAtom((prev) => ({ ...prev, isOpen: !prev.isOpen, data }));
+      toggleAtom((prev) => ({ ...prev, isOpen: !prev.isOpen, data, config }));
     }
   } as any);
 }
