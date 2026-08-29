@@ -1,41 +1,46 @@
 "use client";
 
 import { Person } from "@gravity-ui/icons";
-import { Button, Input, Label, Modal, Surface, TextField } from "@heroui/react";
+import { Button, Input, Key, Label, ListBox, Modal, Select, Surface, TextField } from "@heroui/react";
 import { useState } from "react";
 import { modalBuilderAtom } from "@/utils/atoms";
 import { useAtom } from "jotai";
-import { User } from "@/types/tableTypes";
 
 export interface ModalConfig {
   title: string;
   description: string;
   form: {
     name: string;
-    type: string;
+    fieldType: "textfield" | "select";
+    textType?: "text" | "email" | "password";
     label: string;
     options?: string[];
   }[];
 }
 
 export function ModalBuilder() {
-  const [formState, setFormState] = useState<Partial<User>>({});
+  const [formState, setFormState] = useState<Record<string, any>>({});
   const [modalState, setModalState] = useAtom(modalBuilderAtom);
 
-  const formData = { ...modalState.data.user, ...formState };
+  const formData = { ...modalState.data, ...formState };
 
-  const handleFieldChange = (field: keyof User) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === "" || e.target.value === modalState.data.user?.[field]) {
-      const tempUser = { ...formState };
-      delete tempUser[field];
-      setFormState(tempUser);
+  const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement> | Key | null) => {
+    const value = typeof e === 'string' || typeof e === 'number' || e === null ? e : e.target.value;
+    if (value === modalState.data[field]) {
+      const tempState = { ...formState };
+      delete tempState[field];
+      setFormState(tempState);
       return;
     }
-    setFormState({ ...formState, [field]: e.target.value });
+    setFormState({ ...formState, [field]: value });
   };
 
   const handleToggleModal = () => {
     setModalState(prev => ({ ...prev, isOpen: !prev.isOpen }));
+  };
+
+  const handleReset = () => {
+    setFormState({});
   };
 
   return (
@@ -56,17 +61,48 @@ export function ModalBuilder() {
             <Modal.Body className="p-6">
               <Surface variant="default">
                 <form className="flex flex-col gap-4">
-                  {modalState.config?.form.map((field) => (
-                    <TextField key={field.name} className="w-full" name={field.name} type={field.type} variant="secondary">
-                      <Label>{field.label}</Label>
-                      <Input placeholder={`Enter your ${field.label.toLowerCase()}`} value={formData[field.name as keyof User]} onChange={handleFieldChange(field.name as keyof User)} />
-                    </TextField>
-                  ))}
+                  {modalState.config?.form.map((field) => {
+                    if (field.fieldType === "select") {
+                      return (
+                        <Select
+                          key={field.name}
+                          placeholder="Select one"
+                          variant="secondary"
+                          value={formData[field.name] || null}
+                          onChange={handleFieldChange(field.name)}
+                        >
+                          <Label>{field.label}</Label>
+                          <Select.Trigger>
+                            <Select.Value />
+                            <Select.Indicator />
+                          </Select.Trigger>
+                          <Select.Popover>
+                            <ListBox>
+                              {field.options?.map((option) => (
+                                <ListBox.Item key={option} id={option} textValue={option}>
+                                  {option}
+                                  <ListBox.ItemIndicator />
+                                </ListBox.Item>
+                              ))}
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+                      )
+                    } else if (field.fieldType === "textfield") {
+                      return (
+                        <TextField key={field.name} name={field.name} type={field.textType} variant="secondary">
+                          <Label>{field.label}</Label>
+                          <Input placeholder={`Enter your ${field.label.toLowerCase()}`} value={formData[field.name]} onChange={handleFieldChange(field.name)} />
+                        </TextField>
+                      )
+                    }
+                    return null
+                  })}
                 </form>
               </Surface>
             </Modal.Body>
             <Modal.Footer>
-              <Button slot="close" variant="secondary">
+              <Button variant="secondary" onClick={handleReset}>
                 Reset
               </Button>
               <Button isDisabled={Object.keys(formState).length === 0} slot="close">Save Changes</Button>

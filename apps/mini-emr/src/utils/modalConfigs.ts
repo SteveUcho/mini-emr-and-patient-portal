@@ -7,17 +7,20 @@ export const modals: Record<string, ModalConfig> = {
     form: [
       {
         name: "name",
-        type: "text",
+        fieldType: "textfield",
+        textType: "text",
         label: "Name",
       },
       {
         name: "email",
-        type: "email",
+        fieldType: "textfield",
+        textType: "email",
         label: "Email",
       },
       {
         name: "password",
-        type: "password",
+        fieldType: "textfield",
+        textType: "password",
         label: "Password",
       }
     ]
@@ -28,19 +31,21 @@ export const modals: Record<string, ModalConfig> = {
     form: [
       {
         name: "provider",
-        type: "text",
+        fieldType: "textfield",
+        textType: "text",
         label: "Provider",
       },
       {
         name: "datetime",
-        type: "datetime-local",
+        fieldType: "textfield",
+        textType: "text",
         label: "Date and Time",
       },
       {
         name: "repeat",
-        type: "select",
+        fieldType: "select",
         label: "Repeat",
-        options: ["daily", "weekly", "monthly", "yearly"]
+        options: ["Daily", "Weekly", "Monthly", "Yearly"]
       }
     ]
   }

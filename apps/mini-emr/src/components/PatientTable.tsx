@@ -42,7 +42,7 @@ const columns = columnHelper.columns([
           <div className="border-accent border rounded-lg flex-1 px-2">
             <span className="font-bold">Presc:</span> {prescCount}
           </div>
-          <ToggleModal data={{ user }} config={modals.EditUserModal}>
+          <ToggleModal data={user} config={modals.EditUserModal}>
             <Button isIconOnly aria-label="Edit user" variant="secondary" className="ml-auto">
               <Pencil />
             </Button>
@@ -159,9 +159,11 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                       <div className="flex-1 p-4">
                         <div className="flex items-center justify-between mb-2">
                           <h3>Appointments</h3>
-                          <Button isIconOnly size="sm" aria-label="Add appointment">
-                            <Plus />
-                          </Button>
+                          <ToggleModal data={{}} config={modals.AddAppointmentModal}>
+                            <Button isIconOnly size="sm" aria-label="Add appointment">
+                              <Plus />
+                            </Button>
+                          </ToggleModal>
                         </div>
                         <div className="flex flex-col gap-2">
                           {row.original.appointments.map((appointment) => (
