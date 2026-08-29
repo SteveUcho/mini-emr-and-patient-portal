@@ -6,6 +6,8 @@ import { motion } from "motion/react";
 import React, { useState } from "react";
 import { formatDateString } from "@/utils/stringManipulation";
 import { User } from "@/types/tableTypes";
+import { ToggleAtom } from "./ToggleAtom";
+import { editUserModalAtom } from "@/utils/atoms";
 
 const features = tableFeatures({
   rowSortingFeature, // enables sorting APIs and state
@@ -33,15 +35,17 @@ const columns = columnHelper.columns([
       const prescCount = user.prescriptions.length
       return (
         <div className="flex gap-2 w-full text-center items-center text-accent">
-          <div className="border-accent border rounded-lg flex-1">
+          <div className="border-accent border rounded-lg flex-1 px-2">
             <span className="font-bold">Appt:</span> {apptCount}
           </div>
-          <div className="border-accent border rounded-lg flex-1">
+          <div className="border-accent border rounded-lg flex-1 px-2">
             <span className="font-bold">Presc:</span> {prescCount}
           </div>
-          <Button isIconOnly aria-label="Edit user" variant="secondary" className="ml-auto">
-            <Pencil />
-          </Button>
+          <ToggleAtom atomToggle={editUserModalAtom} data={{ user }}>
+            <Button isIconOnly aria-label="Edit user" variant="secondary" className="ml-auto">
+              <Pencil />
+            </Button>
+          </ToggleAtom>
         </div>
       )
     },
