@@ -6,10 +6,16 @@ import { useState } from "react";
 import { modalBuilderAtom } from "@/utils/atoms";
 import { useAtom } from "jotai";
 
+interface ModalButtonConfig {
+  label: string;
+  isDisabled?: boolean;
+  variant: "primary" | "secondary" | "danger";
+}
+
 export interface ModalConfig {
   title: string;
   description: string;
-  form: {
+  form?: {
     name: string;
     hidden?: boolean;
     fieldType: "textfield" | "select";
@@ -17,12 +23,17 @@ export interface ModalConfig {
     label: string;
     options?: string[];
   }[];
+  footerButtons?: {
+    left: ModalButtonConfig;
+    right: ModalButtonConfig;
+  };
 }
 
 export function ModalBuilder() {
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [modalState, setModalState] = useAtom(modalBuilderAtom);
 
+  const modalConfig = modalState.config;
   const formData = { ...modalState.data, ...formState };
 
   const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement> | Key | null) => {
@@ -60,54 +71,67 @@ export function ModalBuilder() {
                 {modalState.config?.description}
               </p>
             </Modal.Header>
-            <Modal.Body className="p-6">
-              <Surface variant="default">
-                <form className="flex flex-col gap-4">
-                  {modalState.config?.form.map((field) => {
-                    if (field.fieldType === "select") {
-                      return (
-                        <Select
-                          key={field.name}
-                          placeholder="Select one"
-                          variant="secondary"
-                          value={formData[field.name] || null}
-                          onChange={handleFieldChange(field.name)}
-                        >
-                          <Label>{field.label}</Label>
-                          <Select.Trigger className="capitalize">
-                            <Select.Value />
-                            <Select.Indicator />
-                          </Select.Trigger>
-                          <Select.Popover>
-                            <ListBox>
-                              {field.options?.map((option) => (
-                                <ListBox.Item key={option} id={option} textValue={option} className="capitalize">
-                                  {option}
-                                  <ListBox.ItemIndicator />
-                                </ListBox.Item>
-                              ))}
-                            </ListBox>
-                          </Select.Popover>
-                        </Select>
-                      )
-                    } else if (field.fieldType === "textfield") {
-                      return (
-                        <TextField key={field.name} hidden={field.hidden} name={field.name} type={field.textType} variant="secondary">
-                          <Label>{field.label}</Label>
-                          <Input placeholder={`Enter your ${field.label.toLowerCase()}`} value={formData[field.name]} onChange={handleFieldChange(field.name)} />
-                        </TextField>
-                      )
-                    }
-                    return null
-                  })}
-                </form>
-              </Surface>
-            </Modal.Body>
+            {
+              modalState.config?.form?.length && modalState.config.form.every((field) => field.hidden !== true) && (
+                <Modal.Body className="p-6">
+                  <Surface variant="default">
+                    <form className="flex flex-col gap-4">
+                      {modalState.config?.form?.map((field) => {
+                        if (field.fieldType === "select") {
+                          return (
+                            <Select
+                              key={field.name}
+                              placeholder="Select one"
+                              variant="secondary"
+                              value={formData[field.name] || null}
+                              onChange={handleFieldChange(field.name)}
+                            >
+                              <Label>{field.label}</Label>
+                              <Select.Trigger className="capitalize">
+                                <Select.Value />
+                                <Select.Indicator />
+                              </Select.Trigger>
+                              <Select.Popover>
+                                <ListBox>
+                                  {field.options?.map((option) => (
+                                    <ListBox.Item key={option} id={option} textValue={option} className="capitalize">
+                                      {option}
+                                      <ListBox.ItemIndicator />
+                                    </ListBox.Item>
+                                  ))}
+                                </ListBox>
+                              </Select.Popover>
+                            </Select>
+                          )
+                        } else if (field.fieldType === "textfield") {
+                          return (
+                            <TextField key={field.name} hidden={field.hidden} name={field.name} type={field.textType} variant="secondary">
+                              <Label>{field.label}</Label>
+                              <Input placeholder={`Enter your ${field.label.toLowerCase()}`} value={formData[field.name]} onChange={handleFieldChange(field.name)} />
+                            </TextField>
+                          )
+                        }
+                        return null
+                      })}
+                    </form>
+                  </Surface>
+                </Modal.Body>
+              )
+            }
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleReset}>
-                Reset
+              <Button
+                variant={modalConfig?.footerButtons?.left?.variant || "secondary"}
+                onClick={handleReset}
+              >
+                {modalConfig?.footerButtons?.left?.label || "Reset"}
               </Button>
-              <Button isDisabled={Object.keys(formState).length === 0} slot="close">Save Changes</Button>
+              <Button
+                isDisabled={!modalConfig?.form?.every(field => field.hidden) && Object.keys(formState).length === 0}
+                slot="close"
+                variant={modalConfig?.footerButtons?.right?.variant || "primary"}
+              >
+                {modalConfig?.footerButtons?.right?.label || "Save Changes"}
+              </Button>
             </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>

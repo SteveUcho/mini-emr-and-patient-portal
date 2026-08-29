@@ -176,9 +176,11 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                                       <Pencil />
                                     </Button>
                                   </ToggleModal>
-                                  <Button isIconOnly aria-label="Delete appointment" variant="danger-soft">
-                                    <TrashBin />
-                                  </Button>
+                                  <ToggleModal data={appointment} config={modals.DeleteAppointmentModal}>
+                                    <Button isIconOnly aria-label="Delete appointment" variant="danger-soft">
+                                      <TrashBin />
+                                    </Button>
+                                  </ToggleModal>
                                 </div>
                               </div>
                               <Separator className="my-2" variant="secondary" />

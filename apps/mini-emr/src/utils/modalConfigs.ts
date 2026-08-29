@@ -45,7 +45,7 @@ export const modals: Record<string, ModalConfig> = {
         name: "repeat",
         fieldType: "select",
         label: "Repeat",
-        options: ["daaily", "weekly", "monthly", "yearly"]
+        options: ["daily", "weekly", "monthly", "yearly"]
       }
     ]
   },
@@ -79,5 +79,29 @@ export const modals: Record<string, ModalConfig> = {
         options: ["daily", "weekly", "monthly", "yearly"]
       }
     ]
+  },
+  DeleteAppointmentModal: {
+    title: "Delete Appointment",
+    description: "Delete an existing appointment",
+    form: [
+      {
+        name: "id",
+        hidden: true,
+        fieldType: "textfield",
+        textType: "text",
+        label: "ID",
+      }
+    ],
+    footerButtons: {
+      left: {
+        label: "Cancel",
+        variant: "secondary"
+      },
+      right: {
+        isDisabled: false,
+        label: "Delete",
+        variant: "danger"
+      }
+    }
   }
 }
