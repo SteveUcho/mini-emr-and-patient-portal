@@ -3,8 +3,9 @@
 import { Person } from "@gravity-ui/icons";
 import { Button, Input, Key, Label, ListBox, Modal, Select, Surface, TextField } from "@heroui/react";
 import { useState } from "react";
-import { modalBuilderAtom } from "@/utils/atoms";
+import { modalAtom } from "@/utils/atoms";
 import { useAtom } from "jotai";
+import { modalActionMap, ModalKey } from "@/utils/modalConfigs";
 
 interface ModalButtonConfig {
   label: string;
@@ -29,11 +30,17 @@ export interface ModalConfig {
   };
 }
 
-export function ModalBuilder() {
-  const [formState, setFormState] = useState<Record<string, any>>({});
-  const [modalState, setModalState] = useAtom(modalBuilderAtom);
+interface ModalBuilderProps {
+  id: ModalKey;
+  config: ModalConfig;
+}
 
-  const modalConfig = modalState.config;
+export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
+  const { id, config } = props;
+  const [formState, setFormState] = useState<Record<string, any>>({});
+  const [modalState, setModalState] = useAtom(modalAtom);
+
+  const action = modalActionMap[id as keyof typeof modalActionMap];
   const formData = { ...modalState.data, ...formState };
 
   const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement> | Key | null) => {
@@ -49,15 +56,19 @@ export function ModalBuilder() {
   };
 
   const handleToggleModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: !prev.isOpen }));
+    setModalState(prev => ({ ...prev, id: prev.id === id ? undefined : id }));
   };
 
   const handleReset = () => {
     setFormState({});
   };
 
+  const handleSubmit = async () => {
+    await action(formData);
+  };
+
   return (
-    <Modal isOpen={modalState.isOpen} onOpenChange={handleToggleModal}>
+    <Modal isOpen={modalState.id === id} onOpenChange={handleToggleModal}>
       <Modal.Backdrop>
         <Modal.Container placement="auto">
           <Modal.Dialog className="sm:max-w-md">
@@ -66,17 +77,17 @@ export function ModalBuilder() {
               <Modal.Icon className="bg-accent-soft text-accent-soft-foreground">
                 <Person className="size-5" />
               </Modal.Icon>
-              <Modal.Heading>{modalState.config?.title}</Modal.Heading>
+              <Modal.Heading>{config?.title}</Modal.Heading>
               <p className="mt-1.5 text-sm leading-5 text-muted">
-                {modalState.config?.description}
+                {config?.description}
               </p>
             </Modal.Header>
             {
-              modalState.config?.form?.length && modalState.config.form.some((field) => field.hidden !== true) && (
+              config?.form?.length && config.form.some((field) => field.hidden !== true) && (
                 <Modal.Body className="p-6">
                   <Surface variant="default">
                     <form className="flex flex-col gap-4">
-                      {modalState.config?.form?.map((field) => {
+                      {config?.form?.map((field) => {
                         if (field.fieldType === "select") {
                           return (
                             <Select
@@ -120,17 +131,18 @@ export function ModalBuilder() {
             }
             <Modal.Footer>
               <Button
-                variant={modalConfig?.footerButtons?.left?.variant || "secondary"}
+                variant={config?.footerButtons?.left?.variant || "secondary"}
                 onClick={handleReset}
               >
-                {modalConfig?.footerButtons?.left?.label || "Reset"}
+                {config?.footerButtons?.left?.label || "Reset"}
               </Button>
               <Button
-                isDisabled={!modalConfig?.form?.every(field => field.hidden) && Object.keys(formState).length === 0}
+                isDisabled={!config?.form?.every(field => field.hidden) && Object.keys(formState).length === 0}
                 slot="close"
-                variant={modalConfig?.footerButtons?.right?.variant || "primary"}
+                variant={config?.footerButtons?.right?.variant || "primary"}
+                onClick={handleSubmit}
               >
-                {modalConfig?.footerButtons?.right?.label || "Save Changes"}
+                {config?.footerButtons?.right?.label || "Save Changes"}
               </Button>
             </Modal.Footer>
           </Modal.Dialog>

@@ -1,98 +1,37 @@
 import { ModalBuilder } from "@/components/ModalBuilder";
 import { PatientTable } from "@/components/PatientTable";
-import { User } from "@/types/tableTypes";
+import { getPatientsAppointments, getPatientsPrescriptions, getPatients } from "@/actions/patientActions";
+import { ToggleModal } from "@/components/ToggleModal";
+import { modals, ModalKey } from "@/utils/modalConfigs";
+import { Button } from "@heroui/react";
 
-const users: User[] = [
-  {
-    "id": 1,
-    "name": "Mark Johnson",
-    "email": "mark@some-email-provider.net",
-    "password": "Password123!",
-    "appointments": [
-      {
-        "id": 1,
-        "provider": "Dr Kim West",
-        "datetime": "2026-04-16T16:30:00.000-07:00",
-        "repeat": "weekly"
-      },
-      {
-        "id": 2,
-        "provider": "Dr Lin James",
-        "datetime": "2026-04-19T18:30:00.000-07:00",
-        "repeat": "monthly"
-      }
-    ],
-    "prescriptions": [
-      {
-        "id": 1,
-        "medication": "Lexapro",
-        "dosage": "5mg",
-        "quantity": 2,
-        "refill_on": "2026-04-05",
-        "refill_schedule": "monthly"
-      },
-      {
-        "id": 2,
-        "medication": "Ozempic",
-        "dosage": "1mg",
-        "quantity": 1,
-        "refill_on": "2026-04-10",
-        "refill_schedule": "monthly"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "name": "Lisa Smith",
-    "email": "lisa@some-email-provider.net",
-    "password": "Password123!",
-    "appointments": [
-      {
-        "id": 3,
-        "provider": "Dr Sally Field",
-        "datetime": "2026-04-22T18:15:00.000-07:00",
-        "repeat": "monthly"
-      },
-      {
-        "id": 4,
-        "provider": "Dr Lin James",
-        "datetime": "2026-04-25T20:00:00.000-07:00",
-        "repeat": "weekly"
-      }
-    ],
-    "prescriptions": [
-      {
-        "id": 3,
-        "medication": "Metformin",
-        "dosage": "500mg",
-        "quantity": 2,
-        "refill_on": "2026-04-15",
-        "refill_schedule": "monthly"
-      },
-      {
-        "id": 4,
-        "medication": "Diovan",
-        "dosage": "100mg",
-        "quantity": 1,
-        "refill_on": "2026-04-25",
-        "refill_schedule": "monthly"
-      }
-    ]
+const patients = await getPatients();
+const patientIds = patients.map(patient => patient.id);
+const [appointments, prescriptions] = await Promise.all([getPatientsAppointments(patientIds), getPatientsPrescriptions(patientIds)]);
+
+const filledPatients = patients.map(patient => {
+  return {
+    ...patient,
+    appointments: appointments.filter(appointment => appointment.patientId === patient.id),
+    prescriptions: prescriptions.filter(prescription => prescription.patientId === patient.id),
   }
-]
-
-export const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
-export const dosages = ["1mg", "2mg", "3mg", "5mg", "10mg", "25mg", "50mg", "100mg", "250mg", "500mg", "1000mg"];
-
-const showAppointmentKeys = ["datetime", "repeat"]
-const showPrescriptionKeys = ["quantity", "dosage", "refill_on", "refill_schedule"]
+})
 
 export default function Home() {
   return (
     <div className="md:w-8/10 mx-auto p-2 max-w-4xl">
-      <h1 className="text-4xl font-bold my-8">Mini-EMR</h1>
-      <PatientTable data={users} appointmentKeys={showAppointmentKeys} prescriptionKeys={showPrescriptionKeys} />
-      <ModalBuilder />
+      <div className="flex items-center justify-between">
+        <h1 className="text-4xl font-bold my-8">Mini-EMR</h1>
+        <ToggleModal modalId="AddPatientModal">
+          <Button type="button" className="bg-blue-500 text-white px-4 py-2 rounded">Add Patient</Button>
+        </ToggleModal>
+      </div>
+      <PatientTable data={filledPatients} />
+      {
+        Object.entries(modals).map(([key, config]) => (
+          <ModalBuilder key={key} id={key as ModalKey} config={config} />
+        ))
+      }
     </div>
   );
 }

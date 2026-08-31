@@ -1,7 +1,23 @@
-import { dosages, medications } from "@/app/page";
+import { addPatient } from "@/actions/patientActions";
 import { ModalConfig } from "@/components/ModalBuilder";
 
-export const modals: Record<string, ModalConfig> = {
+export const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
+export const dosages = ["1mg", "2mg", "3mg", "5mg", "10mg", "25mg", "50mg", "100mg", "250mg", "500mg", "1000mg"];
+
+export type ModalKey = "EditUserModal" | "AddAppointmentModal" | "EditAppointmentModal" | "DeleteAppointmentModal" | "AddPrescriptionModal" | "EditPrescriptionModal" | "DeletePrescriptionModal" | "AddPatientModal";
+
+export const modalActionMap: Record<ModalKey, (data: any) => Promise<void>> = {
+  EditUserModal: async () => {},
+  AddAppointmentModal: async () => {},
+  EditAppointmentModal: async () => {},
+  DeleteAppointmentModal: async () => {},
+  AddPrescriptionModal: async () => {},
+  EditPrescriptionModal: async () => {},
+  DeletePrescriptionModal: async () => {},
+  AddPatientModal: addPatient,
+}
+
+export const modals: Record<ModalKey, ModalConfig> = {
   EditUserModal: {
     title: "Edit User",
     description: "Fill out the form below to edit the user.",
@@ -195,5 +211,29 @@ export const modals: Record<string, ModalConfig> = {
         variant: "danger"
       }
     }
+  },
+  AddPatientModal: {
+    title: "Add Patient",
+    description: "Add a new patient",
+    form: [
+      {
+        name: "name",
+        fieldType: "textfield",
+        textType: "text",
+        label: "Name",
+      },
+      {
+        name: "email",
+        fieldType: "textfield",
+        textType: "email",
+        label: "Email",
+      },
+      {
+        name: "password",
+        fieldType: "textfield",
+        textType: "password",
+        label: "Password",
+      }
+    ]
   }
 }

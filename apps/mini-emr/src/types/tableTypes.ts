@@ -14,7 +14,7 @@ export interface Prescription {
   refill_schedule: string;
 }
 
-export interface User {
+export interface Patient {
   id: number;
   name: string;
   email: string;

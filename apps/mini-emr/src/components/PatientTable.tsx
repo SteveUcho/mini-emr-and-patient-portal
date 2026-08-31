@@ -1,14 +1,12 @@
 "use client";
 
-import { ChevronDown, ChevronRight, Pencil, Plus, TrashBin } from "@gravity-ui/icons";
+import { ChevronDown, ChevronRight, Pencil } from "@gravity-ui/icons";
 import { Button, Separator, Surface, cn } from "@heroui/react";
 import { createColumnHelper, createSortedRowModel, rowSortingFeature, sortFns, tableFeatures, useTable } from "@tanstack/react-table";
-import { motion } from "motion/react";
 import React, { useState } from "react";
-import { formatDateString } from "@/utils/stringManipulation";
-import { User } from "@/types/tableTypes";
-import { ToggleModal } from "./ToggleAtom";
-import { modals } from "@/utils/modalConfigs";
+import { Patient } from "@/types/tableTypes";
+import { ToggleModal } from "./ToggleModal";
+import { PatientDetails } from "./PatientDetails";
 
 const features = tableFeatures({
   rowSortingFeature, // enables sorting APIs and state
@@ -16,7 +14,7 @@ const features = tableFeatures({
   sortFns,
 })
 
-const columnHelper = createColumnHelper<typeof features, User>()
+const columnHelper = createColumnHelper<typeof features, Patient>()
 
 const columns = columnHelper.columns([
   columnHelper.accessor('name', {
@@ -42,7 +40,7 @@ const columns = columnHelper.columns([
           <div className="border-accent border rounded-lg flex-1 px-2">
             <span className="font-bold">Presc:</span> {prescCount}
           </div>
-          <ToggleModal data={user} config={modals.EditUserModal}>
+          <ToggleModal modalId="EditUserModal" data={user} >
             <Button isIconOnly aria-label="Edit user" variant="secondary" className="ml-auto">
               <Pencil />
             </Button>
@@ -54,13 +52,11 @@ const columns = columnHelper.columns([
 ])
 
 interface PatientTableProps {
-  data: User[]
-  appointmentKeys: string[]
-  prescriptionKeys: string[]
+  data: Patient[]
 }
 
 export function PatientTable(props: Readonly<PatientTableProps>) {
-  const { data, appointmentKeys, prescriptionKeys } = props
+  const { data } = props
   const table = useTable({
     key: 'users-table',
     features,
@@ -150,94 +146,11 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                 </tr>
                 <tr>
                   <td>
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={openKeys.has(row.id) ? { height: "auto" } : { height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="sm:flex overflow-hidden"
-                    >
-                      <div className="flex-1 p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3>Appointments</h3>
-                          <ToggleModal config={modals.AddAppointmentModal}>
-                            <Button isIconOnly size="sm" aria-label="Add appointment">
-                              <Plus />
-                            </Button>
-                          </ToggleModal>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          {row.original.appointments.map((appointment) => (
-                            <div key={appointment.id} className="border-2 rounded-lg p-2">
-                              <div className="flex items-center justify-between">
-                                <h4>{appointment.provider}</h4>
-                                <div>
-                                  <ToggleModal data={appointment} config={modals.EditAppointmentModal}>
-                                    <Button isIconOnly aria-label="Edit appointment" variant="secondary" className="mr-1">
-                                      <Pencil />
-                                    </Button>
-                                  </ToggleModal>
-                                  <ToggleModal data={appointment} config={modals.DeleteAppointmentModal}>
-                                    <Button isIconOnly aria-label="Delete appointment" variant="danger-soft">
-                                      <TrashBin />
-                                    </Button>
-                                  </ToggleModal>
-                                </div>
-                              </div>
-                              <Separator className="my-2" variant="secondary" />
-                              {
-                                appointmentKeys.map((key) => (
-                                  <div key={key} className="capitalize">
-                                    <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof appointment[key as keyof typeof appointment] === 'string' ? formatDateString(appointment[key as keyof typeof appointment] as string) : appointment[key as keyof typeof appointment]}
-                                  </div>
-                                ))
-                              }
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <Separator orientation="vertical" variant="secondary" />
-                      <div className="flex-1 p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3>Prescriptions</h3>
-                          <ToggleModal config={modals.AddPrescriptionModal}>
-                            <Button isIconOnly size="sm" aria-label="Add prescription">
-                              <Plus />
-                            </Button>
-                          </ToggleModal>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          {row.original.prescriptions.map((prescription) => {
-                            return (
-                              <div key={prescription.id} className="border-2 rounded-lg p-2">
-                                <div className="flex items-center justify-between">
-                                  <h4>{prescription.medication}</h4>
-                                  <div>
-                                    <ToggleModal data={prescription} config={modals.EditPrescriptionModal}>
-                                      <Button isIconOnly aria-label="Edit prescription" variant="secondary" className="mr-1">
-                                        <Pencil />
-                                      </Button>
-                                    </ToggleModal>
-                                    <ToggleModal config={modals.DeletePrescriptionModal}>
-                                      <Button isIconOnly aria-label="Delete prescription" variant="danger-soft">
-                                        <TrashBin />
-                                      </Button>
-                                    </ToggleModal>
-                                  </div>
-                                </div>
-                                <Separator className="my-2" variant="secondary" />
-                                {
-                                  prescriptionKeys.map((key) => (
-                                    <div key={key} className="capitalize">
-                                      <span className="font-semibold">{key.replaceAll('_', ' ')}:</span> {typeof prescription[key as keyof typeof prescription] === 'string' ? formatDateString(prescription[key as keyof typeof prescription] as string) : prescription[key as keyof typeof prescription]}
-                                    </div>
-                                  ))
-                                }
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    </motion.div>
+                  <PatientDetails 
+                    open={openKeys.has(row.id)}
+                    appointments={row.original.appointments}
+                    prescriptions={row.original.prescriptions}
+                  />
                   </td>
                 </tr>
                 <tr>
