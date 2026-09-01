@@ -1,5 +1,6 @@
 export interface Appointment {
   id: number;
+  patientId: number;
   provider: string;
   datetime: string;
   repeat: string;
@@ -7,6 +8,7 @@ export interface Appointment {
 
 export interface Prescription {
   id: number;
+  patientId: number;
   medication: string;
   dosage: string;
   quantity: number;

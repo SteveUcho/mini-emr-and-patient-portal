@@ -5,19 +5,19 @@ import { ToggleModal } from "@/components/ToggleModal";
 import { modals, ModalKey } from "@/utils/modalConfigs";
 import { Button } from "@heroui/react";
 
-const patients = await getPatients();
-const patientIds = patients.map(patient => patient.id);
-const [appointments, prescriptions] = await Promise.all([getPatientsAppointments(patientIds), getPatientsPrescriptions(patientIds)]);
+export default async function Home() {
+  const patients = await getPatients();
+  const patientIds = patients.map(patient => patient.id);
+  const [appointments, prescriptions] = await Promise.all([getPatientsAppointments(patientIds), getPatientsPrescriptions(patientIds)]);
 
-const filledPatients = patients.map(patient => {
-  return {
-    ...patient,
-    appointments: appointments.filter(appointment => appointment.patientId === patient.id),
-    prescriptions: prescriptions.filter(prescription => prescription.patientId === patient.id),
-  }
-})
+  const filledPatients = patients.map(patient => {
+    return {
+      ...patient,
+      appointments: appointments.filter(appointment => appointment.patientId === patient.id),
+      prescriptions: prescriptions.filter(prescription => prescription.patientId === patient.id),
+    }
+  })
 
-export default function Home() {
   return (
     <div className="md:w-8/10 mx-auto p-2 max-w-4xl">
       <div className="flex items-center justify-between">

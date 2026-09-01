@@ -1,4 +1,4 @@
-import { addPatient } from "@/actions/patientActions";
+import { addPatient, addPatientAppointment } from "@/actions/patientActions";
 import { ModalConfig } from "@/components/ModalBuilder";
 
 export const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
@@ -8,7 +8,7 @@ export type ModalKey = "EditUserModal" | "AddAppointmentModal" | "EditAppointmen
 
 export const modalActionMap: Record<ModalKey, (data: any) => Promise<void>> = {
   EditUserModal: async () => {},
-  AddAppointmentModal: async () => {},
+  AddAppointmentModal: addPatientAppointment,
   EditAppointmentModal: async () => {},
   DeleteAppointmentModal: async () => {},
   AddPrescriptionModal: async () => {},
@@ -46,6 +46,13 @@ export const modals: Record<ModalKey, ModalConfig> = {
     title: "Add Appointment",
     description: "Add a new appointment",
     form: [
+      {
+        name: "patientId",
+        hidden: true,
+        fieldType: "textfield",
+        textType: "text",
+        label: "Patient ID",
+      },
       {
         name: "provider",
         fieldType: "textfield",

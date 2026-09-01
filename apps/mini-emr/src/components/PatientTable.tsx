@@ -148,6 +148,7 @@ export function PatientTable(props: Readonly<PatientTableProps>) {
                   <td>
                   <PatientDetails 
                     open={openKeys.has(row.id)}
+                    patientId={row.original.id}
                     appointments={row.original.appointments}
                     prescriptions={row.original.prescriptions}
                   />

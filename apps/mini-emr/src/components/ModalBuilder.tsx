@@ -65,6 +65,7 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
 
   const handleSubmit = async () => {
     await action(formData);
+    setFormState({});
   };
 
   return (

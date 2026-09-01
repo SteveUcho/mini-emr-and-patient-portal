@@ -10,12 +10,13 @@ const prescriptionKeys = ["quantity", "dosage", "refill_on", "refill_schedule"]
 
 interface PatientDetailsProps {
   open: boolean;
+  patientId: number;
   appointments: Appointment[];
   prescriptions: Prescription[];
 }
 
 export const PatientDetails = (props: PatientDetailsProps) => {
-  const { open, appointments, prescriptions } = props;
+  const { open, patientId, appointments, prescriptions } = props;
 
   return (
     <motion.div
@@ -27,7 +28,7 @@ export const PatientDetails = (props: PatientDetailsProps) => {
       <div className="flex-1 p-4">
         <div className="flex items-center justify-between mb-2">
           <h3>Appointments</h3>
-          <ToggleModal modalId="AddAppointmentModal">
+          <ToggleModal modalId="AddAppointmentModal" data={{ patientId }}>
             <Button isIconOnly size="sm" aria-label="Add appointment">
               <Plus />
             </Button>

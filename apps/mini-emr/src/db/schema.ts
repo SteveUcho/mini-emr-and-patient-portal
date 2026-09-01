@@ -4,9 +4,7 @@ export const patient = pgTable("patient", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
-  password: text("password").notNull(),
-  appointments: integer("appointments").notNull(),
-  prescriptions: integer("prescriptions").notNull(),
+  password: text("password").notNull()
 });
 
 export const appointment = pgTable("appointment", {
