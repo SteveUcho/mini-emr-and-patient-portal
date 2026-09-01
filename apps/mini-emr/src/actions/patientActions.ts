@@ -3,7 +3,7 @@
 import { db } from "@/db/drizzle";
 import { appointment, prescription, patient } from "@/db/schema";
 import { Appointment, Patient, Prescription } from "@/types/tableTypes";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function getPatients() {
@@ -32,5 +32,17 @@ export async function addPatientAppointment(appointmentData: Appointment) {
 
 export async function addPatientPrescription(prescriptionData: Prescription) {
   await db.insert(prescription).values(prescriptionData);
+  revalidatePath("/");
+}
+
+export async function deletePatientPrescription({ id }: Partial<Prescription>) {
+  if (!id) return;
+  await db.delete(prescription).where(eq(prescription.id, id));
+  revalidatePath("/");
+}
+
+export async function deletePatientAppointment({ id }: Partial<Appointment>) {
+  if (!id) return;
+  await db.delete(appointment).where(eq(appointment.id, id));
   revalidatePath("/");
 }
