@@ -57,3 +57,10 @@ export async function editPatientPrescription({ id, ...data }: Partial<Prescript
   await db.update(prescription).set(data).where(eq(prescription.id, id));
   revalidatePath("/");
 }
+
+export async function editPatient({ id, ...data }: Partial<Patient>) {
+  if (!id) return;
+  await db.update(patient).set(data).where(eq(patient.id, id));
+  revalidatePath("/");
+}
+
