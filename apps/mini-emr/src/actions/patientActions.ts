@@ -17,7 +17,6 @@ export async function addPatient(inputUser: Omit<Patient, "id" | "appointments" 
 }
 
 export async function getPatientsAppointments(patientIds: number[]) {
-  console.log("Getting appointments for patient IDs:", patientIds);
   return await db.select().from(appointment).where(inArray(appointment.patientId, patientIds));
 }
 
@@ -44,5 +43,17 @@ export async function deletePatientPrescription({ id }: Partial<Prescription>) {
 export async function deletePatientAppointment({ id }: Partial<Appointment>) {
   if (!id) return;
   await db.delete(appointment).where(eq(appointment.id, id));
+  revalidatePath("/");
+}
+
+export async function editPatientAppointment({ id, ...data }: Partial<Appointment>) {
+  if (!id) return;
+  await db.update(appointment).set(data).where(eq(appointment.id, id));
+  revalidatePath("/");
+}
+
+export async function editPatientPrescription({ id, ...data }: Partial<Prescription>) {
+  if (!id) return;
+  await db.update(prescription).set(data).where(eq(prescription.id, id));
   revalidatePath("/");
 }

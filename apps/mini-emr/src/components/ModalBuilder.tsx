@@ -52,7 +52,6 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
       return;
     }
     setFormState({ ...formState, [field]: value });
-    console.log(formState, formData);
   };
 
   const handleToggleModal = () => {
