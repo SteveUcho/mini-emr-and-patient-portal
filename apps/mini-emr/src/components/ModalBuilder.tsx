@@ -1,7 +1,7 @@
 "use client";
 
 import { Person } from "@gravity-ui/icons";
-import { Button, Description, Input, Key, Label, ListBox, Modal, NumberField, Select, Surface, TextField } from "@heroui/react";
+import { Button, Input, Key, Label, ListBox, Modal, NumberField, Select, Surface, TextField } from "@heroui/react";
 import { useState } from "react";
 import { modalAtom } from "@/utils/atoms";
 import { useAtom } from "jotai";
@@ -56,7 +56,8 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
   };
 
   const handleToggleModal = () => {
-    setModalState(prev => ({ ...prev, id: prev.id === id ? undefined : id }));
+    setModalState({});
+    setFormState({});
   };
 
   const handleReset = () => {
@@ -65,7 +66,6 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
 
   const handleSubmit = async () => {
     await action(formData);
-    setFormState({});
   };
 
   return (
