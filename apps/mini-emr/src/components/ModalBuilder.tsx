@@ -1,7 +1,7 @@
 "use client";
 
 import { Person } from "@gravity-ui/icons";
-import { Button, Input, Key, Label, ListBox, Modal, Select, Surface, TextField } from "@heroui/react";
+import { Button, Description, Input, Key, Label, ListBox, Modal, NumberField, Select, Surface, TextField } from "@heroui/react";
 import { useState } from "react";
 import { modalAtom } from "@/utils/atoms";
 import { useAtom } from "jotai";
@@ -19,7 +19,7 @@ export interface ModalConfig {
   form?: {
     name: string;
     hidden?: boolean;
-    fieldType: "textfield" | "select";
+    fieldType: "textfield" | "select" | "numberfield";
     textType?: "text" | "email" | "password";
     label: string;
     options?: string[];
@@ -121,6 +121,17 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
                               <Label>{field.label}</Label>
                               <Input placeholder={`Enter your ${field.label.toLowerCase()}`} value={formData[field.name]} onChange={handleFieldChange(field.name)} />
                             </TextField>
+                          )
+                        } else if (field.fieldType === "numberfield") {
+                          return (
+                            <NumberField key={field.name} minValue={0} name={field.name} value={formData[field.name]} variant="secondary" onChange={handleFieldChange(field.name)}>
+                              <Label>{field.label}</Label>
+                              <NumberField.Group>
+                                <NumberField.DecrementButton />
+                                <NumberField.Input />
+                                <NumberField.IncrementButton />
+                              </NumberField.Group>
+                            </NumberField>
                           )
                         }
                         return null

@@ -1,4 +1,4 @@
-import { addPatient, addPatientAppointment } from "@/actions/patientActions";
+import { addPatient, addPatientAppointment, addPatientPrescription } from "@/actions/patientActions";
 import { ModalConfig } from "@/components/ModalBuilder";
 
 export const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
@@ -11,7 +11,7 @@ export const modalActionMap: Record<ModalKey, (data: any) => Promise<void>> = {
   AddAppointmentModal: addPatientAppointment,
   EditAppointmentModal: async () => {},
   DeleteAppointmentModal: async () => {},
-  AddPrescriptionModal: async () => {},
+  AddPrescriptionModal: addPatientPrescription,
   EditPrescriptionModal: async () => {},
   DeletePrescriptionModal: async () => {},
   AddPatientModal: addPatient,
@@ -143,6 +143,11 @@ export const modals: Record<ModalKey, ModalConfig> = {
         fieldType: "select",
         label: "Dosage",
         options: dosages
+      },
+      {
+        name: "quantity",
+        fieldType: "numberfield",
+        label: "Quantity",
       },
       {
         name: "refill_on",

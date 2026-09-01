@@ -2,7 +2,7 @@
 
 import { db } from "@/db/drizzle";
 import { appointment, prescription, patient } from "@/db/schema";
-import { Appointment, Patient } from "@/types/tableTypes";
+import { Appointment, Patient, Prescription } from "@/types/tableTypes";
 import { inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -27,5 +27,10 @@ export async function getPatientsPrescriptions(patientIds: number[]) {
 
 export async function addPatientAppointment(appointmentData: Appointment) {
   await db.insert(appointment).values(appointmentData);
+  revalidatePath("/");
+}
+
+export async function addPatientPrescription(prescriptionData: Prescription) {
+  await db.insert(prescription).values(prescriptionData);
   revalidatePath("/");
 }

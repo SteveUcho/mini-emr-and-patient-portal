@@ -68,7 +68,7 @@ export const PatientDetails = (props: PatientDetailsProps) => {
       <div className="flex-1 p-4">
         <div className="flex items-center justify-between mb-2">
           <h3>Prescriptions</h3>
-          <ToggleModal modalId="AddPrescriptionModal">
+          <ToggleModal modalId="AddPrescriptionModal" data={{ patientId }}>
             <Button isIconOnly size="sm" aria-label="Add prescription">
               <Plus />
             </Button>
