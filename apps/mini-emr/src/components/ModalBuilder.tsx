@@ -1,34 +1,12 @@
 "use client";
 
-import { Person } from "@gravity-ui/icons";
-import { Button, Input, Key, Label, ListBox, Modal, NumberField, Select, Surface, TextField } from "@heroui/react";
+import { Clock, Person } from "@gravity-ui/icons";
+import { Button, Calendar, DateField, DatePicker, DateValue, Input, Key, Label, ListBox, Modal, NumberField, Select, Surface, TextField, TimeField, TimeValue } from "@heroui/react";
 import { useState } from "react";
 import { modalAtom } from "@/utils/atoms";
 import { useAtom } from "jotai";
-import { modalActionMap, ModalKey } from "@/utils/modalConfigs";
-
-interface ModalButtonConfig {
-  label: string;
-  isDisabled?: boolean;
-  variant: "primary" | "secondary" | "danger";
-}
-
-export interface ModalConfig {
-  title: string;
-  description: string;
-  form?: {
-    name: string;
-    hidden?: boolean;
-    fieldType: "textfield" | "select" | "numberfield";
-    textType?: "text" | "email" | "password";
-    label: string;
-    options?: string[];
-  }[];
-  footerButtons?: {
-    left: ModalButtonConfig;
-    right: ModalButtonConfig;
-  };
-}
+import { modalActionMap, ModalConfig, ModalKey } from "@/utils/modalConfigs";
+import { fromDate, parseAbsolute, parseDateTime, parseZonedDateTime } from "@internationalized/date";
 
 interface ModalBuilderProps {
   id: ModalKey;
@@ -44,6 +22,7 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
   const formData = { ...modalState.data, ...formState };
 
   const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement> | Key | null) => {
+    console.log(field, formData[field], 'e', e, e?.toString());
     const value = typeof e === 'string' || typeof e === 'number' || e === null ? e : e.target.value;
     if (value === modalState.data?.[field]) {
       const tempState = { ...formState };
@@ -131,6 +110,82 @@ export function ModalBuilder(props: Readonly<ModalBuilderProps>) {
                                 <NumberField.IncrementButton />
                               </NumberField.Group>
                             </NumberField>
+                          )
+                        } else if (field.fieldType === "datetimeField") {
+                          return (
+                            <DatePicker
+                              key={field.name}
+                              name={field.name}
+                              value={formData[field.name] ? (parseAbsolute(formData[field.name], "America/New_York") as any) : undefined}
+                              onChange={(value) => handleFieldChange(field.name)(value?.toDate("America/New_York")?.toISOString() || "")}
+                              granularity="minute"
+                              hideTimeZone={false}
+                              hourCycle={12}
+                              shouldForceLeadingZeros={true}
+                            >
+                              {({ state }) => (
+                                <>
+                                  <Label>Date and time</Label>
+                                  <DateField.Group fullWidth variant="secondary">
+                                    <DateField.Input>
+                                      {(segment) => <DateField.Segment segment={segment} />}
+                                    </DateField.Input>
+                                    <DateField.Suffix>
+                                      <DatePicker.Trigger>
+                                        <DatePicker.TriggerIndicator />
+                                      </DatePicker.Trigger>
+                                    </DateField.Suffix>
+                                  </DateField.Group>
+                                  <DatePicker.Popover className="flex flex-col gap-3">
+                                    <Calendar aria-label="Event date">
+                                      <Calendar.Header>
+                                        <Calendar.YearPickerTrigger>
+                                          <Calendar.YearPickerTriggerHeading />
+                                          <Calendar.YearPickerTriggerIndicator />
+                                        </Calendar.YearPickerTrigger>
+                                        <Calendar.NavButton slot="previous" />
+                                        <Calendar.NavButton slot="next" />
+                                      </Calendar.Header>
+                                      <Calendar.Grid>
+                                        <Calendar.GridHeader>
+                                          {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+                                        </Calendar.GridHeader>
+                                        <Calendar.GridBody>{(date) => <Calendar.Cell date={date} />}</Calendar.GridBody>
+                                      </Calendar.Grid>
+                                      <Calendar.YearPickerGrid>
+                                        <Calendar.YearPickerGridBody>
+                                          {({ year }) => <Calendar.YearPickerCell year={year} />}
+                                        </Calendar.YearPickerGridBody>
+                                      </Calendar.YearPickerGrid>
+                                    </Calendar>
+                                    <div className="flex items-center justify-between gap-4">
+                                      <Label>Time</Label>
+                                      <TimeField
+                                        isRequired
+                                        fullWidth
+                                        aria-label="Time"
+                                        granularity="minute"
+                                        hideTimeZone={false}
+                                        hourCycle={12}
+                                        name="time"
+                                        shouldForceLeadingZeros={true}
+                                        value={state.timeValue}
+                                        onChange={(v) => state.setTimeValue(v as TimeValue)}
+                                      >
+                                        <TimeField.Group variant="secondary">
+                                          <TimeField.Input>
+                                            {(segment) => <TimeField.Segment segment={segment} />}
+                                          </TimeField.Input>
+                                          <TimeField.Suffix>
+                                            <Clock className="size-4 text-muted" />
+                                          </TimeField.Suffix>
+                                        </TimeField.Group>
+                                      </TimeField>
+                                    </div>
+                                  </DatePicker.Popover>
+                                </>
+                              )}
+                            </DatePicker>
                           )
                         }
                         return null
