@@ -1,8 +1,30 @@
 import { addPatient, addPatientAppointment, addPatientPrescription, deletePatientAppointment, deletePatientPrescription, editPatient, editPatientAppointment, editPatientPrescription } from "@/actions/patientActions";
-import { ModalConfig } from "@/components/ModalBuilder";
 
 export const medications = ["Diovan", "Lexapro", "Metformin", "Ozempic", "Prozac", "Seroquel", "Tegretol"];
 export const dosages = ["1mg", "2mg", "3mg", "5mg", "10mg", "25mg", "50mg", "100mg", "250mg", "500mg", "1000mg"];
+
+interface ModalButtonConfig {
+  label: string;
+  isDisabled?: boolean;
+  variant: "primary" | "secondary" | "danger";
+}
+
+export interface ModalConfig {
+  title: string;
+  description: string;
+  form?: {
+    name: string;
+    hidden?: boolean;
+    fieldType: "textfield" | "select" | "numberfield" | "datetimeField";
+    textType?: "text" | "email" | "password";
+    label: string;
+    options?: string[];
+  }[];
+  footerButtons?: {
+    left: ModalButtonConfig;
+    right: ModalButtonConfig;
+  };
+}
 
 export type ModalKey = "EditUserModal" | "AddAppointmentModal" | "EditAppointmentModal" | "DeleteAppointmentModal" | "AddPrescriptionModal" | "EditPrescriptionModal" | "DeletePrescriptionModal" | "AddPatientModal";
 
@@ -61,7 +83,7 @@ export const modals: Record<ModalKey, ModalConfig> = {
       },
       {
         name: "datetime",
-        fieldType: "textfield",
+        fieldType: "datetimeField",
         textType: "text",
         label: "Date and Time",
       },
@@ -92,8 +114,7 @@ export const modals: Record<ModalKey, ModalConfig> = {
       },
       {
         name: "datetime",
-        fieldType: "textfield",
-        textType: "text",
+        fieldType: "datetimeField",
         label: "Date and Time",
       },
       {
